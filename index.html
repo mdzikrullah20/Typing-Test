@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+    <div class="top">
+        <div class="black">
+            <p>Text Color Picker</p>
+            <input type="color" class="form-control" id="colorpicker">
+        </div>
+        <div class="black">
+            <p>Font Size</p>
+            <select name="" id="font-size">
+                <option value="5">5px</option>
+                <option value="10">10px</option>
+                <option value="20">20px</option>
+                <option value="30">30px</option>
+                <option value="40">40px</option>
+                <option value="50">50px</option>
+            </select>
+        </div>
+    </div>
+    <canvas class="canvas" id="mycanvas"></canvas>
+    <div class="bottom">
+      <button class="btn btn-danger" id="clearButton">clear</button>
+      <button class="btn btn-success" id="saveButton">Save & Download</button>
+      <button class="btn btn-warning" id="retriveButton">Retrieve save signature</button>
+    </div>
+</div>
+    <script src="app.js"></script>
+</body>
+</html>
