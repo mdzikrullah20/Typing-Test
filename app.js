@@ -1,67 +1,85 @@
-const colorPicker = document.getElementById('colorpicker')
-const convasColor = document.getElementById('convasColor')
-const fontSize = document.getElementById('font-size')
-const canvas = document.getElementById('mycanvas')
-const clearButton = document.getElementById('clearButton')
-const saveButton = document.getElementById('saveButton')
-const retriveButton = document.getElementById('retriveButton')
-const background = document.getElementById('Background')
-const ctx = canvas.getContext('2d')
+const typingText = document.querySelector('.typing-text p')
+const input = document.querySelector('.input-field')
+const time = document.querySelector('.time span b')
+const mistake = document.querySelector('.mistake span')
+const Wpm = document.querySelector('.Wpm span')
+const cpm = document.querySelector('.cpm span')
+const btn = document.querySelector('#btn')
 
-canvas.width = 800;
-canvas.height = 500;
+//set value
 
-colorPicker.addEventListener('change',(e) => {
-    ctx.strokeStyle = e.target.value;
-    ctx.fillStyle = e.target.value;
-})
-canvas.addEventListener('mousedown',(e) => {
-    isDrawing = true;
-    lastX = e.offsetX;
-    lastY = e.offsetY;
-})
-canvas.addEventListener('mousemove', (e) => {
-    if (isDrawing) { 
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
+let timer;
+let maxTime = 60;
+let timeLeft = maxTime;
+let charIndex = 0;
+let mistakes = 0;
+let isTyping = false;
 
-        lastX = e.offsetX;
-        lastY = e.offsetY;
+
+function loadParagraph() {
+    let paragraph = ["Avoid daydreaming about the  years to come.", 
+        "You are the most important person in your whole life.","Granovetter begins by looking at balance theory. In brief",
+        "Many novice writers tend to make a sharp distinction between content and style."]
+
+
+    const randomIndex = Math.floor(Math.random() * paragraph.length)
+    typingText.innerHTML = "";
+    for(const char of paragraph[randomIndex]){
+        console.log(char);
+        typingText.innerHTML += `<span>${char}</span>`; 
     }
-});
-canvas.addEventListener('mouseup',(e) => {
-    isDrawing = false;
-})
+}
+//handal user input 
 
-colorPicker.addEventListener('change', (e) => {
-    ctx.strokeStyle = e.target.value;
-    ctx.fillStyle = e.target.value;
-});
+function initTyping(){
+    const char = typingText.querySelectorAll('span')
+    const typedChar = input.value.charAt(charIndex);
 
-fontSize.addEventListener('change',(e) => {
-    ctx.lineWidth = e.target.value;
-})
+    if(charIndex < char.length && timeLeft >0){      
 
-clearButton.addEventListener('click', () => {    
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-})
-saveButton.addEventListener('click', () => {
-    localStorage.setItem('canvasContents', canvas.toDataURL())
-    let link = document.createElement('a')
-    link.download = 'my-canvas.png';
-    link.href = canvas.toDataURL();
-    link.click();
-})
-
-retriveButton.addEventListener('click',()=>{
-    let savedCanvas = localStorage.getItem('canvasContents')
-
-    if(savedCanvas){
-        let img = new Image();
-        img.src = savedCanvas;
-        ctx.drawImage(img,0,0)
+        if(!isTyping){
+            timer = setInterval(iniTime,1000);
+            isTyping = true;
+        }
+        if(char[charIndex].innerText === typedChar){
+            char[charIndex].classList.add("correct")
+        }
+        else{
+            mistakes++;
+        char[charIndex].classList.add('incorrect');
+        }
+        charIndex++;
+        mistake.innerText = mistakes; 
+        cpm.innerText = charIndex - mistakes;
     }
-})
+    else{
+        clearInterval(timer)
+    }
+}
+///Timer function
+function iniTime(){
+    if(timeLeft > 0){
+        timeLeft--;
+        time.innerHTML = timeLeft;
 
+        const wpmVal = Math.floor(Math.random((charIndex - mistakes)/5) / (maxTime - timeLeft)*60)
+        Wpm.innerText = wpmVal;
+    }    
+    else{
+        clearInterval(timer)
+    }
+}
+function reset(){
+    clearInterval(timer)
+    loadParagraph()
+    timeLeft =  maxTime;
+    charIndex = 0;
+    mistakes = 0;
+    isTyping = false;
+    input.value = ""
+}
+
+input.addEventListener('input', initTyping)
+input.value = ""
+btn.addEventListener('click',reset)
+loadParagraph();
